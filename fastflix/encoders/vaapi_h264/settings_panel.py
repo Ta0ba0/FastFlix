@@ -26,7 +26,7 @@ pix_fmts = [
 
 
 class VAAPIH264(VAAPIPanel):
-    profile_name = "VAAPI H264"
+    profile_name = "vaapi_h264"  # must be same as profile name
 
     def __init__(self, parent, main, app: FastFlixApp):
         super().__init__(parent, main, app)
