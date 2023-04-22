@@ -136,6 +136,7 @@ def generate_filters(
     scale=None,
     scale_filter="lanczos",
     remove_hdr=False,
+    remove_hdr_format="yuv420p",
     rotate=0,
     vertical_flip=None,
     horizontal_flip=None,
@@ -190,7 +191,7 @@ def generate_filters(
             )
         else:
             filter_list.append(
-                f"zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap={tone_map}:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p"
+                f"zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap={tone_map}:desat=0,zscale=t=bt709:m=bt709:r=tv,format={remove_hdr_format}"
             )
 
     eq_filters = []
@@ -240,6 +241,7 @@ def generate_all(
     disable_filters: bool = False,
     hw_upload: bool = False,
     start_extra: str = "",
+    **filters_extra,
 ) -> Tuple[str, str]:
     settings = fastflix.current_video.video_settings.video_encoder_settings
 
@@ -258,6 +260,8 @@ def generate_all(
 
     filters = None
     if not disable_filters:
+        filter_details = fastflix.current_video.video_settings.dict().copy()
+        filter_details.update(filters_extra)
         filters = generate_filters(
             source=fastflix.current_video.source,
             burn_in_subtitle_track=burn_in_track,
@@ -265,7 +269,7 @@ def generate_all(
             enable_opencl=fastflix.opencl_support,
             scale=fastflix.current_video.scale,
             hw_upload=hw_upload,
-            **fastflix.current_video.video_settings.dict(),
+            **filter_details,
         )
 
     ending = generate_ending(
