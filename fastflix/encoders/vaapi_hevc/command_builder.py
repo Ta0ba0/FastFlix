@@ -17,7 +17,6 @@ def build(fastflix: FastFlix):
         fastflix,
         "hevc_vaapi",
         start_extra=start_extra,
-        hw_upload=True,
         enable_opencl=False,
         vaapi=True,
     )

@@ -155,7 +155,6 @@ def generate_filters(
     deblock: Union[str, None] = None,
     deblock_size: int = 4,
     denoise: Union[str, None] = None,
-    hw_upload: bool = False,
     **_,
 ):
     filter_list = []
@@ -166,7 +165,8 @@ def generate_filters(
     if crop:
         filter_list.append(f"crop={crop['width']}:{crop['height']}:{crop['left']}:{crop['top']}")
     if scale:
-        filter_list.append(f"scale={scale}:flags={scale_filter}")
+        if not vaapi:
+            filter_list.append(f"scale={scale}:flags={scale_filter}")
     if rotate:
         if rotate == 1:
             filter_list.append(f"transpose=1")
@@ -184,17 +184,6 @@ def generate_filters(
         filter_list.append(f"deblock=filter={deblock}:block={deblock_size}")
     if denoise:
         filter_list.append(denoise)
-    if remove_hdr:
-        if enable_opencl:
-            filter_list.append(
-                f"format=p010,hwupload,tonemap_opencl=tonemap={tone_map}:desat=0:r=tv:p=bt709:t=bt709:m=bt709:format=nv12,hwdownload,format=nv12"
-            )
-        elif vaapi:
-            filter_list.append(f"tonemap_vaapi=format=nv12:p=bt709:t=bt709:m=bt709")
-        else:
-            filter_list.append(
-                f"zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap={tone_map}:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p"
-            )
 
     eq_filters = []
     if brightness:
@@ -207,8 +196,22 @@ def generate_filters(
         eq_filters.insert(0, "eq=eval=frame")
         filter_list.append(":".join(eq_filters))
 
-    if hw_upload:
-        filter_list.append(f"{'format=nv12|vaapi,' if not remove_hdr else ''}hwupload")
+    if filter_list and vaapi:
+        filter_list.insert(0, "hwdownload")
+    if vaapi:
+        filter_list.append("format=nv12|vaapi,hwupload")
+
+    if remove_hdr:
+        if enable_opencl:
+            filter_list.append(
+                f"format=p010,hwupload,tonemap_opencl=tonemap={tone_map}:desat=0:r=tv:p=bt709:t=bt709:m=bt709:format=nv12,hwdownload,format=nv12"
+            )
+        elif vaapi:
+            filter_list.append(f"tonemap_vaapi=format=nv12:p=bt709:t=bt709:m=bt709")
+        else:
+            filter_list.append(
+                f"zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap={tone_map}:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p"
+            )
 
     filters = ",".join(filter_list)
     if filters and custom_filters:
@@ -241,7 +244,6 @@ def generate_all(
     audio: bool = True,
     subs: bool = True,
     disable_filters: bool = False,
-    hw_upload: bool = False,
     vaapi: bool = False,
     start_extra: str = "",
     **filters_extra,
@@ -274,7 +276,6 @@ def generate_all(
             burn_in_subtitle_track=burn_in_track,
             burn_in_subtitle_type=burn_in_type,
             scale=fastflix.current_video.scale,
-            hw_upload=hw_upload,
             enable_opencl=enable_opencl,
             vaapi=vaapi,
             **filter_details,
