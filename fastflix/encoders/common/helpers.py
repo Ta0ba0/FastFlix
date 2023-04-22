@@ -136,7 +136,7 @@ def generate_filters(
     scale=None,
     scale_filter="lanczos",
     remove_hdr=False,
-    remove_hdr_format=",format=yuv420p",
+    vaapi: bool = False,
     rotate=0,
     vertical_flip=None,
     horizontal_flip=None,
@@ -189,9 +189,11 @@ def generate_filters(
             filter_list.append(
                 f"format=p010,hwupload,tonemap_opencl=tonemap={tone_map}:desat=0:r=tv:p=bt709:t=bt709:m=bt709:format=nv12,hwdownload,format=nv12"
             )
+        elif vaapi:
+            filter_list.append(f"tonemap_vaapi,format=nv12")
         else:
             filter_list.append(
-                f"zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap={tone_map}:desat=0,zscale=t=bt709:m=bt709:r=tv{remove_hdr_format}"
+                f"zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap={tone_map}:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p"
             )
 
     eq_filters = []
@@ -206,7 +208,7 @@ def generate_filters(
         filter_list.append(":".join(eq_filters))
 
     if hw_upload:
-        filter_list.append("format=nv12|vaapi,hwupload")
+        filter_list.append(f"{'format=nv12|vaapi,' if not remove_hdr else ''}hwupload")
 
     filters = ",".join(filter_list)
     if filters and custom_filters:
@@ -240,6 +242,7 @@ def generate_all(
     subs: bool = True,
     disable_filters: bool = False,
     hw_upload: bool = False,
+    vaapi: bool = False,
     start_extra: str = "",
     **filters_extra,
 ) -> Tuple[str, str]:
@@ -273,6 +276,7 @@ def generate_all(
             scale=fastflix.current_video.scale,
             hw_upload=hw_upload,
             enable_opencl=enable_opencl,
+            vaapi=vaapi,
             **filter_details,
         )
 
