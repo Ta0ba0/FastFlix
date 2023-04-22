@@ -6,7 +6,7 @@ from PySide6 import QtCore, QtWidgets
 
 from fastflix.encoders.common.setting_panel import VAAPIPanel
 from fastflix.language import t
-from fastflix.models.encode import VAAPIVP9Settings
+from fastflix.models.encode import VAAPIMPEG2Settings
 from fastflix.models.fastflix_app import FastFlixApp
 from fastflix.shared import link
 
@@ -72,7 +72,7 @@ class VAAPIMPEG2(VAAPIPanel):
         self.main.build_commands()
 
     def update_video_encoder_settings(self):
-        settings = VAAPIVP9Settings(
+        settings = VAAPIMPEG2Settings(
             max_muxing_queue_size=self.widgets.max_mux.currentText(),
             extra=self.ffmpeg_extras,
             vaapi_device=self.widgets.vaapi_device.text(),
