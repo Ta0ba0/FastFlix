@@ -261,12 +261,12 @@ def generate_all(
     filters = None
     if not disable_filters:
         filter_details = fastflix.current_video.video_settings.dict().copy()
+        filter_details["enable_opencl"] = fastflix.opencl_support
         filter_details.update(filters_extra)
         filters = generate_filters(
             source=fastflix.current_video.source,
             burn_in_subtitle_track=burn_in_track,
             burn_in_subtitle_type=burn_in_type,
-            enable_opencl=fastflix.opencl_support,
             scale=fastflix.current_video.scale,
             hw_upload=hw_upload,
             **filter_details,
