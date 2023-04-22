@@ -15,7 +15,7 @@ def build(fastflix: FastFlix):
     start_extra = f"-init_hw_device vaapi=hwdev:{settings.vaapi_device} -hwaccel vaapi -hwaccel_device hwdev -hwaccel_output_format vaapi "
     beginning, ending = generate_all(
         fastflix,
-        "vp9_vaapi",
+        "mpeg2_vaapi",
         start_extra=start_extra,
         enable_opencl=False,
         vaapi=True,
