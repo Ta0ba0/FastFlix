@@ -14,7 +14,7 @@ def build(fastflix: FastFlix):
     settings: VAAPIVP9Settings = fastflix.current_video.video_settings.video_encoder_settings
     start_extra = f"-init_hw_device vaapi=hwdev:{settings.vaapi_device} -hwaccel vaapi -hwaccel_device hwdev -hwaccel_output_format vaapi "
     beginning, ending = generate_all(
-        fastflix, "vp9_vaapi", start_extra=start_extra, hw_upload=True, enable_opencl=False, remove_hdr_format="nv12"
+        fastflix, "vp9_vaapi", start_extra=start_extra, hw_upload=True, enable_opencl=False, remove_hdr_format=""
     )
 
     beginning += (

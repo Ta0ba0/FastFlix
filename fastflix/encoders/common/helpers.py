@@ -77,6 +77,7 @@ def generate_ffmpeg_start(
         [
             f'"{ffmpeg}"',
             start_extra,
+            ("-init_hw_device opencl=ocl -filter_hw_device ocl " if enable_opencl and remove_hdr else ""),
             "-y",
             time_one,
             incoming_fps,
@@ -92,7 +93,6 @@ def generate_ffmpeg_start(
             f"-pix_fmt {pix_fmt}",
             f"{f'-maxrate:v {maxrate}k' if maxrate else ''}",
             f"{f'-bufsize:v {bufsize}k' if bufsize else ''}",
-            ("-init_hw_device opencl=ocl -filter_hw_device ocl " if enable_opencl and remove_hdr else ""),
             f"{track_title if video_track_title else ''}",
             " ",  # Leave space after commands
         ]
@@ -136,7 +136,7 @@ def generate_filters(
     scale=None,
     scale_filter="lanczos",
     remove_hdr=False,
-    remove_hdr_format="yuv420p",
+    remove_hdr_format=",format=yuv420p",
     rotate=0,
     vertical_flip=None,
     horizontal_flip=None,
@@ -191,7 +191,7 @@ def generate_filters(
             )
         else:
             filter_list.append(
-                f"zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap={tone_map}:desat=0,zscale=t=bt709:m=bt709:r=tv,format={remove_hdr_format}"
+                f"zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap={tone_map}:desat=0,zscale=t=bt709:m=bt709:r=tv{remove_hdr_format}"
             )
 
     eq_filters = []
@@ -258,10 +258,13 @@ def generate_all(
 
     attachments = build_attachments(fastflix.current_video.video_settings.attachment_tracks)
 
+    enable_opencl = fastflix.opencl_support
+    if "enable_opencl" in filters_extra:
+        enable_opencl = filters_extra.pop("enable_opencl")
+
     filters = None
     if not disable_filters:
         filter_details = fastflix.current_video.video_settings.dict().copy()
-        filter_details["enable_opencl"] = fastflix.opencl_support
         filter_details.update(filters_extra)
         filters = generate_filters(
             source=fastflix.current_video.source,
@@ -269,6 +272,7 @@ def generate_all(
             burn_in_subtitle_type=burn_in_type,
             scale=fastflix.current_video.scale,
             hw_upload=hw_upload,
+            enable_opencl=enable_opencl,
             **filter_details,
         )
 
@@ -287,7 +291,7 @@ def generate_all(
         encoder=encoder,
         filters=filters,
         concat=fastflix.current_video.concat,
-        enable_opencl=fastflix.opencl_support,
+        enable_opencl=enable_opencl,
         ffmpeg_version=fastflix.ffmpeg_version,
         start_extra=start_extra,
         **fastflix.current_video.video_settings.dict(),
