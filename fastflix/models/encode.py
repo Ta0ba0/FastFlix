@@ -537,6 +537,19 @@ class VAAPIVP9Settings(EncoderSettings):
     pix_fmt: str = "vaapi"
 
 
+class VAAPIMPEG2Settings(EncoderSettings):
+    name = "VAAPI MPEG2"
+
+    vaapi_device: str = "/dev/dri/renderD128"
+    low_power: bool = False
+    idr_interval: str = "0"
+    b_depth: str = "1"
+    rc_mode: str = "auto"
+    qp: Optional[Union[int, float]] = 26
+    bitrate: Optional[str] = None
+    pix_fmt: str = "vaapi"
+
+
 setting_types = {
     "x265": x265Settings,
     "x264": x264Settings,
@@ -564,4 +577,5 @@ setting_types = {
     "vaapi_h264": VAAPIH264Settings,
     "vaapi_hevc": VAAPIHEVCSettings,
     "vaapi_vp9": VAAPIVP9Settings,
+    "vaapi_mpeg2": VAAPIMPEG2Settings,
 }
