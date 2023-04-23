@@ -330,7 +330,9 @@ class VCEENCC(VCEPanel):
             pa_paq=self.widgets.pa_paq.currentText(),
             pa_taq=None if self.widgets.pa_taq.currentIndex() == 0 else self.widgets.pa_taq.currentText(),
             pa_motion_quality=self.widgets.pa_motion_quality.currentText(),
-            output_depth=self.widgets.output_depth.currentText(),
+            output_depth=None
+            if self.widgets.output_depth.currentIndex() == 0
+            else self.widgets.output_depth.currentText(),
         )
 
         encode_type, q_value = self.get_mode_settings()
@@ -352,10 +354,3 @@ class VCEENCC(VCEPanel):
             self.extract_button.show()
         else:
             self.extract_button.hide()
-        if self.app.fastflix.current_video:
-            self.widgets.output_depth.setCurrentText(
-                "10"
-                if self.app.fastflix.current_video.current_video_stream.bit_depth > 8
-                and not self.app.fastflix.current_video.video_settings.remove_hdr
-                else "8"
-            )

@@ -319,7 +319,7 @@ class VCEEncCSettings(EncoderSettings):
     pa_paq: str | None = None
     pa_taq: int | None = None
     pa_motion_quality: str | None = None
-    output_depth: str = "8"
+    output_depth: str | None = None
 
 
 class VCEEncCAV1Settings(EncoderSettings):
@@ -353,7 +353,7 @@ class VCEEncCAV1Settings(EncoderSettings):
     pa_paq: str | None = None
     pa_taq: int | None = None
     pa_motion_quality: str | None = None
-    output_depth: str = "8"
+    output_depth: str | None
 
 
 class VCEEncCAVCSettings(EncoderSettings):
@@ -387,7 +387,7 @@ class VCEEncCAVCSettings(EncoderSettings):
     pa_paq: str | None = None
     pa_taq: int | None = None
     pa_motion_quality: str | None = None
-    output_depth: str = "8"
+    output_depth: str | None = None
 
 
 class rav1eSettings(EncoderSettings):
