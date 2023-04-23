@@ -9539,3 +9539,17 @@ Disable completion and error messages:
   pol: Wyłącz komunikaty o ukończeniu i błędach
   ukr: Вимкнути повідомлення про завершення та помилки
   kor: 완료 및 오류 메시지 비활성화
+Output Depth:
+  eng: Output Depth
+  deu: Ausgabetiefe
+  fra: Profondeur de sortie
+  ita: Profondità di uscita
+  spa: Profundidad de salida
+  zho: 输出深度
+  jpn: 出力深度
+  rus: Глубина вывода
+  por: Profundidade de saída
+  swe: Utdata djup
+  pol: Głębokość wyjściowa
+  ukr: Глибина виводу
+  kor: 출력 깊이

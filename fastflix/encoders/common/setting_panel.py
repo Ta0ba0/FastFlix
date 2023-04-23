@@ -780,6 +780,15 @@ class VCEPanel(RigayaPanel):
             self.labels["pa_row1"].hide()
             self.labels["pa_row2"].hide()
 
+    def init_output_depth(self):
+        return self._add_combo_box(
+            label="Output Depth",
+            widget_name="output_depth",
+            tooltip="Output Depth",
+            options=["8", "10"],
+            opt="output_depth",
+        )
+
 
 class VAAPIPanel(SettingPanel):
     def init_rc_mode(self):

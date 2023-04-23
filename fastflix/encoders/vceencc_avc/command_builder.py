@@ -103,6 +103,8 @@ def build(fastflix: FastFlix):
         profile_opt,
         "--level",
         (settings.level or "auto"),
+        "--output-depth",
+        settings.output_depth,
         rigaya_auto_options(fastflix),
         "--motion-est",
         settings.mv_precision,

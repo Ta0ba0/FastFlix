@@ -122,7 +122,7 @@ def build(fastflix: FastFlix):
         (max_cll if max_cll else ""),
         (dhdr if dhdr else ""),
         "--output-depth",
-        ("10" if video.current_video_stream.bit_depth > 8 and not video.video_settings.remove_hdr else "8"),
+        settings.output_depth,
         "--motion-est",
         settings.mv_precision,
         ("--vbaq" if settings.vbaq else ""),
